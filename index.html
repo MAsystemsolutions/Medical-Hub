@@ -1,0 +1,660 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Patient CRM & Medical Operations Portal</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
+  <style>
+    :root { --vogue-bg: #2c2e33; --vogue-card-bg: #ffffff; --vogue-black: #111111; --vogue-muted: #777777; --vogue-light-gray: #f4f4f0; --vogue-border: 1px solid #111111; --vogue-alert: #d81b60; }
+    body { background-color: var(--vogue-bg) !important; color: var(--vogue-black); padding: 40px 20px; font-family: 'Montserrat', sans-serif; letter-spacing: 0.5px; }
+    .header-container { border-bottom: 2px solid #ffffff; padding-bottom: 20px; }
+    .header-container h2 { color: #ffffff !important; font-family: 'Playfair Display', serif; font-weight: 700; text-transform: uppercase; margin: 0; }
+    .header-subtitle { font-size: 0.65rem; text-transform: uppercase; letter-spacing: 3px; color: #cccccc !important; }
+    .brand-logo { height: 60px; border: 1px solid #ffffff; margin-right: 20px; object-fit: cover; box-shadow: 4px 4px 0px rgba(0,0,0,0.3); }
+    .card { border-radius: 0; border: var(--vogue-border); background-color: var(--vogue-card-bg); box-shadow: 12px 12px 0px rgba(0,0,0,0.35); }
+    .kpi-card { border: var(--vogue-border); padding: 20px; text-align: center; height: 100%; display: flex; flex-direction: column; justify-content: center; }
+    .kpi-number { font-family: 'Playfair Display', serif; font-size: 2.2rem; font-weight: 700; line-height: 1; margin-bottom: 5px; }
+    .kpi-label { font-size: 0.65rem; text-transform: uppercase; letter-spacing: 1.5px; color: var(--vogue-muted); font-weight: 600; }
+    .med-icon-badge { display: inline-flex; align-items: center; justify-content: center; width: 26px; height: 26px; border: 1px solid var(--vogue-black); background: #ffffff; color: var(--vogue-black); font-weight: 700; margin-right: 8px; font-size: 0.85rem; }
+    .filter-bar { background: var(--vogue-light-gray); border: var(--vogue-border); padding: 15px 20px; margin-bottom: 20px; box-shadow: 6px 6px 0px rgba(0,0,0,0.3); }
+    .filter-label { font-size: 0.65rem; text-transform: uppercase; font-weight: 600; letter-spacing: 1px; color: var(--vogue-black); margin-bottom: 4px; }
+    .nav-tabs { border-bottom: 2px solid var(--vogue-black); margin-bottom: 20px; }
+    .nav-tabs .nav-link { border-radius: 0; color: #ffffff; font-weight: 600; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1.5px; padding: 12px 20px; border: none; cursor: pointer; }
+    .nav-tabs .nav-link.active { background-color: #ffffff; color: var(--vogue-black); border: 1px solid #ffffff; font-weight: 700; }
+    .btn { border-radius: 0; text-transform: uppercase; font-size: 0.75rem; font-weight: 600; letter-spacing: 2px; }
+    .btn-primary { background-color: var(--vogue-black); border-color: var(--vogue-black); color: #ffffff; }
+    .btn-primary:hover, .btn-primary:disabled { background-color: #ffffff; color: var(--vogue-black); border-color: var(--vogue-black); }
+    .btn-header { background-color: #ffffff; color: var(--vogue-black); border: 1px solid #ffffff; }
+    .btn-action { border: 1px solid var(--vogue-black); background: transparent; padding: 4px 8px; font-size: 0.65rem; font-weight: 600; cursor: pointer; }
+    .btn-action:hover { background-color: var(--vogue-black); color: #ffffff; }
+    .progress { border-radius: 0; height: 12px; background-color: #e0e0e0; border: 1px solid var(--vogue-black); }
+    .progress-bar { background-color: var(--vogue-black); }
+    .table thead th { font-family: 'Montserrat', sans-serif; text-transform: uppercase; font-size: 0.7rem; letter-spacing: 2px; background-color: var(--vogue-black) !important; color: #ffffff !important; padding: 15px; border: none; }
+    .table tbody td { padding: 14px 15px; border-bottom: 1px solid #e0e0e0; font-size: 0.85rem; }
+    .badge-clear { border: 1px solid #28a745; color: #28a745; font-size: 0.6rem; padding: 3px 6px; font-weight: 600; text-transform: uppercase; }
+    .badge-alert { background-color: var(--vogue-alert); color: #ffffff; font-size: 0.6rem; padding: 4px 8px; font-weight: 700; text-transform: uppercase; }
+    .badge-pending { border: 1px solid #b8860b; color: #b8860b; font-size: 0.6rem; padding: 3px 6px; font-weight: 600; text-transform: uppercase; }
+    .badge-vogue { border: 1px solid var(--vogue-black); color: var(--vogue-black); font-size: 0.6rem; padding: 3px 6px; font-weight: 600; text-transform: uppercase; }
+    .modal-content { border-radius: 0; border: 2px solid var(--vogue-black); box-shadow: 12px 12px 0px rgba(0,0,0,0.5); background-color: var(--vogue-light-gray); }
+    .modal-header { background-color: var(--vogue-black); color: #ffffff; border-radius: 0; }
+    .ai-widget-button { position: fixed; bottom: 25px; right: 25px; z-index: 1050; background-color: #ffffff; color: var(--vogue-black); border: 2px solid var(--vogue-black); padding: 12px 20px; font-size: 0.75rem; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; box-shadow: 6px 6px 0px rgba(0,0,0,0.4); cursor: pointer; }
+    .ai-widget-button:hover { transform: translateY(-3px); background-color: var(--vogue-black); color: #ffffff; }
+    .ai-chat-card { position: fixed; bottom: 85px; right: 25px; width: 360px; max-width: 90vw; height: 480px; z-index: 1050; background: #ffffff; border: 2px solid var(--vogue-black); box-shadow: 12px 12px 0px rgba(0,0,0,0.5); display: none; flex-direction: column; }
+    .ai-chat-header { background-color: var(--vogue-black); color: #ffffff; padding: 15px; display: flex; justify-content: space-between; align-items: center; }
+    .ai-chat-body { flex: 1; padding: 15px; overflow-y: auto; background-color: var(--vogue-light-gray); display: flex; flex-direction: column; gap: 10px; }
+    .ai-msg { padding: 10px 14px; font-size: 0.8rem; line-height: 1.4; max-width: 85%; }
+    .ai-msg-bot { background-color: #ffffff; border: 1px solid var(--vogue-black); color: var(--vogue-black); align-self: flex-start; }
+    .ai-msg-user { background-color: var(--vogue-black); color: #ffffff; align-self: flex-end; }
+    .ai-chat-footer { padding: 10px; background-color: #ffffff; border-top: 1px solid var(--vogue-black); }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="d-flex justify-content-between align-items-center mb-4 header-container">
+      <div class="d-flex align-items-center">
+        <img src="https://res.cloudinary.com/dkmv3fmsa/image/upload/v1789252668/Screenshot_2026-09-12_173605_hwxart.png" alt="Logo" class="brand-logo">
+        <div>
+          <h2><span class="med-icon-badge">✚</span>Patient CRM & Medical Hub</h2>
+          <div class="header-subtitle">Unified Patient Records, Diagnosis & Reminder Engine</div>
+        </div>
+      </div>
+      <div>
+        <button class="btn btn-header me-2" data-bs-toggle="modal" data-bs-target="#newVisitModal">+ Log Checkup</button>
+        <button class="btn btn-header" data-bs-toggle="modal" data-bs-target="#newPatientModal">+ New Patient</button>
+      </div>
+    </div>
+
+    <!-- KPI Dashboard -->
+    <div class="row g-3 mb-4">
+      <div class="col-md-3"><div class="kpi-card"><div class="kpi-number" id="kpiTotalPatients">0</div><div class="kpi-label">✚ Registered CRM Patients</div></div></div>
+      <div class="col-md-3"><div class="kpi-card"><div class="kpi-number" id="kpiTotalVisitsCount">0</div><div class="kpi-label">🩺 Lifetime Encounters</div></div></div>
+      <div class="col-md-3"><div class="kpi-card"><div class="kpi-number" id="kpiTomorrowRemindersCount" style="color:var(--vogue-alert);">0</div><div class="kpi-label">⏰ Tomorrow's Checkups</div></div></div>
+      <div class="col-md-3"><div class="kpi-card"><div class="kpi-number" id="kpiPendingDocs">0</div><div class="kpi-label">📋 Pending Intake Docs</div></div></div>
+    </div>
+
+    <!-- Navigation Tabs -->
+    <ul class="nav nav-tabs" id="portalTabs">
+      <li class="nav-item"><a class="nav-link active" onclick="switchTab('patientsTab')">Master Patient CRM Registry</a></li>
+      <li class="nav-item"><a class="nav-link" onclick="switchTab('visitsTab')">Visits & Reminders</a></li>
+      <li class="nav-item"><a class="nav-link" onclick="switchTab('docsTab')">Document Vault</a></li>
+      <li class="nav-item"><a class="nav-link" onclick="switchTab('careTab')">Care Plans</a></li>
+    </ul>
+
+    <!-- PATIENT CRM TAB -->
+    <div id="patientsTab" class="card p-0 mb-5">
+      <div class="p-3 bg-light border-bottom border-dark">
+        <label class="filter-label">Search Master CRM Registry</label>
+        <input type="text" id="patientSearch" class="form-control" placeholder="Search by Patient ID, Name, Phone..." onkeyup="renderPatientsTable()">
+      </div>
+      <table class="table align-middle m-0">
+        <thead><tr><th>Patient ID</th><th>Name / Email</th><th>DOB / Age / Phone</th><th>Insurance</th><th>Visits</th><th>Care Progress</th><th>Actions</th></tr></thead>
+        <tbody id="patientsTable">
+          <tr><td colspan="7" class="text-center py-5"><div class="spinner-border text-dark mb-2"></div><div class="fw-bold">Syncing Database...</div></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- VISITS TAB -->
+    <div id="visitsTab" class="card p-0 mb-5" style="display:none;">
+      <div class="p-3 bg-light border-bottom border-dark">
+        <h6 class="fw-bold text-uppercase text-danger mb-2">⏰ Tomorrow's Appointments Queue</h6>
+        <table class="table table-sm align-middle m-0 bg-white border border-dark">
+          <thead><tr style="background:#111; color:#fff;"><th>Patient Name</th><th>Follow-Up Date</th><th>Prep Notes</th><th>Actions</th></tr></thead>
+          <tbody id="tomorrowQueueBody"><tr><td colspan="4" class="text-center py-3 text-muted">No appointments scheduled for tomorrow.</td></tr></tbody>
+        </table>
+      </div>
+      <div class="filter-bar border-bottom border-dark m-0">
+        <label class="filter-label">Filter Visits by Specific Patient</label>
+        <select id="visitPatientSelect" class="form-select" onchange="renderVisitsTable()"><option value="">-- View All Patient Visits --</option></select>
+      </div>
+      <table class="table align-middle m-0">
+        <thead><tr><th>Visit ID</th><th>Patient Name</th><th>Date</th><th>Encounter & Doctor</th><th>Clinical Notes & Diagnosis</th><th>Next Follow-Up</th><th>Actions</th></tr></thead>
+        <tbody id="visitsTable"><tr><td colspan="7" class="text-center py-5 text-muted">Loading Visits...</td></tr></tbody>
+      </table>
+    </div>
+
+    <!-- DOCS TAB -->
+    <div id="docsTab" class="card p-0 mb-5" style="display:none;">
+      <div class="filter-bar border-bottom border-dark m-0">
+        <label class="filter-label">Filter Docs by Patient</label>
+        <select id="vaultPatientSelect" class="form-select" onchange="renderDocsTable()"><option value="">-- Choose Patient --</option></select>
+      </div>
+      <table class="table align-middle m-0">
+        <thead><tr><th>Doc ID</th><th>Intake Document</th><th>Status</th><th>File</th><th>Actions</th></tr></thead>
+        <tbody id="docsTable"><tr><td colspan="5" class="text-center py-5 text-muted">Please select a patient.</td></tr></tbody>
+      </table>
+    </div>
+
+    <!-- CARE PLAN TAB -->
+    <div id="careTab" class="card p-0 mb-5" style="display:none;">
+      <div class="filter-bar border-bottom border-dark m-0">
+        <label class="filter-label">Filter Care Plan by Patient</label>
+        <select id="carePatientSelect" class="form-select" onchange="renderCarePlansTable()"><option value="">-- Choose Patient --</option></select>
+      </div>
+      <table class="table align-middle m-0">
+        <thead><tr><th>Milestone ID</th><th>Treatment Step</th><th>Target Date</th><th>Status</th><th>Actions</th></tr></thead>
+        <tbody id="carePlansTable"><tr><td colspan="5" class="text-center py-5 text-muted">Please select a patient.</td></tr></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- AI ASSISTANT -->
+  <button class="ai-widget-button" onclick="toggleAIChat()">✨ AI Guide</button>
+  <div class="ai-chat-card" id="aiChatCard">
+    <div class="ai-chat-header"><span style="font-weight:700;">Medical Assistant</span><button type="button" class="btn-close btn-close-vogue" onclick="toggleAIChat()"></button></div>
+    <div class="ai-chat-body" id="aiChatBody"><div class="ai-msg ai-msg-bot">Welcome! Click <b>Chart</b> on any patient to view their full record, or <b>+ Log Checkup</b> for returning patients.</div></div>
+    <div class="ai-chat-footer"><form onsubmit="handleAISubmit(event)" class="d-flex gap-2"><input type="text" id="aiInput" class="form-control" placeholder="Ask question..."><button type="submit" class="btn btn-primary">Ask</button></form></div>
+  </div>
+
+  <!-- MODALS -->
+
+  <!-- 1. Patient Registration Modal -->
+  <div class="modal fade" id="newPatientModal" tabindex="-1"><div class="modal-dialog modal-lg"><div class="modal-content">
+    <div class="modal-header"><h5 class="modal-title">✚ Register Patient</h5></div>
+    <form onsubmit="handlePatientSubmit(event)"><div class="modal-body p-4 bg-white">
+      <div class="row g-3 mb-3"><div class="col-md-6"><label class="form-label fw-bold">Full Name</label><input type="text" id="pName" class="form-control" placeholder="Jane Doe" required></div><div class="col-md-6"><label class="form-label fw-bold">Email</label><input type="email" id="pEmail" class="form-control" placeholder="patient@email.com" required></div></div>
+      <div class="row g-3 mb-3"><div class="col-md-6"><label class="form-label fw-bold">DOB</label><input type="date" id="pDob" class="form-control" required></div><div class="col-md-6"><label class="form-label fw-bold">Phone</label><input type="text" id="pPhone" class="form-control" placeholder="(555) 000-0000" required></div></div>
+      <div class="row g-3 mb-3"><div class="col-md-6"><label class="form-label fw-bold">Insurance Provider</label><input type="text" id="pInsurance" class="form-control" placeholder="Blue Cross / Self-Pay"></div><div class="col-md-6"><label class="form-label fw-bold">Policy Number</label><input type="text" id="pPolicyNum" class="form-control" placeholder="POL-990812"></div></div>
+      <div class="mb-3"><label class="form-label fw-bold">Intake Notes</label><textarea id="pNotes" class="form-control" rows="2" placeholder="Initial consultation notes..."></textarea></div>
+    </div><div class="modal-footer"><button type="submit" id="savePatientBtn" class="btn btn-primary w-100">Initialize File</button></div></form>
+  </div></div></div>
+
+  <!-- EDIT PATIENT MODAL -->
+  <div class="modal fade" id="editPatientModal" tabindex="-1"><div class="modal-dialog modal-lg"><div class="modal-content">
+    <div class="modal-header"><h5 class="modal-title">Edit Patient Profile</h5><button type="button" class="btn-close btn-close-vogue" data-bs-dismiss="modal"></button></div>
+    <form onsubmit="handleEditPatientSubmit(event)">
+      <div class="modal-body p-4 bg-white">
+        <input type="hidden" id="editPId">
+        <div class="row g-3 mb-3"><div class="col-md-6"><label class="form-label fw-bold">Full Name</label><input type="text" id="editPName" class="form-control" required></div><div class="col-md-6"><label class="form-label fw-bold">Email</label><input type="email" id="editPEmail" class="form-control" required></div></div>
+        <div class="row g-3 mb-3"><div class="col-md-6"><label class="form-label fw-bold">DOB</label><input type="date" id="editPDob" class="form-control" required></div><div class="col-md-6"><label class="form-label fw-bold">Phone</label><input type="text" id="editPPhone" class="form-control" required></div></div>
+        <div class="row g-3 mb-3"><div class="col-md-6"><label class="form-label fw-bold">Insurance Provider</label><input type="text" id="editPInsurance" class="form-control"></div><div class="col-md-6"><label class="form-label fw-bold">Policy Number</label><input type="text" id="editPPolicyNum" class="form-control"></div></div>
+      </div>
+      <div class="modal-footer"><button type="submit" id="saveEditPatientBtn" class="btn btn-primary w-100">Update Profile</button></div>
+    </form>
+  </div></div></div>
+
+  <!-- 2. Log Visit Modal -->
+  <div class="modal fade" id="newVisitModal" tabindex="-1"><div class="modal-dialog modal-lg"><div class="modal-content">
+    <div class="modal-header"><h5 class="modal-title">🩺 Log Visit Encounter</h5></div>
+    <form onsubmit="handleVisitSubmit(event)"><div class="modal-body p-4 bg-white">
+      <div class="mb-3"><label class="form-label fw-bold">Select Existing Patient</label><select id="vPatientSelect" class="form-select" required></select></div>
+      <div class="row g-3 mb-3">
+        <div class="col-md-4"><label class="form-label fw-bold">Encounter Type</label><select id="vVisitType" class="form-select"><option>Annual Checkup</option><option>Routine Follow-Up</option><option>Specialist Consultation</option><option>Lab & Vitals</option><option>Urgent Care</option></select></div>
+        <div class="col-md-4"><label class="form-label fw-bold">Visit Date</label><input type="date" id="vDate" class="form-control" required></div>
+        <div class="col-md-4"><label class="form-label fw-bold">Attending Doctor / Specialist</label><input type="text" id="vProvider" class="form-control" placeholder="e.g., Dr. Smith (Cardiology)" required></div>
+      </div>
+      <div class="row g-3 mb-3">
+        <div class="col-md-6"><label class="form-label fw-bold">Upload Diagnosis / Prescription (PDF/Img)</label><input type="file" id="vDiagnosisFile" class="form-control" accept="image/*,.pdf"></div>
+        <div class="col-md-6"><label class="form-label fw-bold">Next Follow-Up Date</label><input type="date" id="vNextFollowUpDate" class="form-control"></div>
+      </div>
+      <div class="mb-3"><label class="form-label fw-bold">Prep Instructions / What to Bring</label><input type="text" id="vFollowUpInstructions" class="form-control" placeholder="e.g., Fast 8 hours, bring previous lab results..."></div>
+      <div class="mb-3"><label class="form-label fw-bold">Clinical Diagnosis Notes & Observations</label><textarea id="vNotes" class="form-control" rows="3" placeholder="Symptoms, exam findings, or prescribed treatment..."></textarea></div>
+    </div><div class="modal-footer"><button type="submit" id="saveVisitBtn" class="btn btn-primary w-100">Post Visit Encounter</button></div></form>
+  </div></div></div>
+
+  <!-- EDIT ENCOUNTER MODAL -->
+  <div class="modal fade" id="editVisitModal" tabindex="-1"><div class="modal-dialog"><div class="modal-content">
+    <div class="modal-header"><h5 class="modal-title">Edit Encounter Details</h5><button type="button" class="btn-close btn-close-vogue" data-bs-dismiss="modal"></button></div>
+    <form onsubmit="handleEditVisitSubmit(event)">
+      <div class="modal-body p-4 bg-white">
+        <input type="hidden" id="editVId">
+        <div class="mb-3"><label class="form-label fw-bold">Encounter Type</label><input type="text" id="editVType" class="form-control" required></div>
+        <div class="mb-3"><label class="form-label fw-bold">Attending Doctor / Specialist</label><input type="text" id="editVProvider" class="form-control" placeholder="e.g., Dr. Davis" required></div>
+        <div class="mb-3"><label class="form-label fw-bold">Clinical Notes / Diagnosis</label><textarea id="editVNotes" class="form-control" rows="3"></textarea></div>
+      </div>
+      <div class="modal-footer"><button type="submit" id="saveEditVisitBtn" class="btn btn-primary w-100">Save Changes</button></div>
+    </form>
+  </div></div></div>
+
+  <!-- 3. Patient Chart Modal -->
+  <div class="modal fade" id="patientRecordModal" tabindex="-1"><div class="modal-dialog modal-lg"><div class="modal-content">
+    <div class="modal-header"><h5 class="modal-title" style="color:#fff;">✚ Complete Patient Chart</h5><button type="button" class="btn-close btn-close-vogue" data-bs-dismiss="modal"></button></div>
+    <div class="modal-body p-4 bg-white" id="patientRecordBody"></div>
+  </div></div></div>
+
+  <!-- 4. Diagnosis Upload Modal -->
+  <div class="modal fade" id="uploadDiagModal" tabindex="-1"><div class="modal-dialog modal-sm"><div class="modal-content">
+    <div class="modal-header"><h5 class="modal-title">Upload Diagnosis</h5></div>
+    <form onsubmit="handleDiagnosisUploadSubmit(event)"><div class="modal-body p-4 bg-white"><input type="hidden" id="diagVisitId">
+      <div class="mb-3"><label class="form-label fw-bold">Select File</label><input type="file" id="diagFile" class="form-control" accept="image/*,.pdf" required></div>
+    </div><div class="modal-footer"><button type="submit" id="saveDiagBtn" class="btn btn-primary w-100">Attach Document</button></div></form>
+  </div></div></div>
+
+  <!-- 4.5. Reschedule Modal -->
+  <div class="modal fade" id="rescheduleModal" tabindex="-1"><div class="modal-dialog modal-sm"><div class="modal-content">
+    <div class="modal-header"><h5 class="modal-title">🗓 Reschedule</h5><button type="button" class="btn-close btn-close-vogue" data-bs-dismiss="modal"></button></div>
+    <form onsubmit="handleRescheduleSubmit(event)"><div class="modal-body p-4 bg-white"><input type="hidden" id="reschedVisitId">
+      <div class="mb-3"><label class="form-label fw-bold">New Follow-Up Date</label><input type="date" id="reschedDate" class="form-control" required></div>
+      <div class="mb-3"><label class="form-label fw-bold">Updated Prep Notes</label><input type="text" id="reschedNotes" class="form-control"></div>
+    </div><div class="modal-footer"><button type="submit" id="saveReschedBtn" class="btn btn-primary w-100">Save Date</button></div></form>
+  </div></div></div>
+
+  <!-- 5. Doc Upload Modal -->
+  <div class="modal fade" id="uploadDocModal" tabindex="-1"><div class="modal-dialog modal-sm"><div class="modal-content">
+    <div class="modal-header"><h5 class="modal-title">Upload Intake Form</h5></div>
+    <form onsubmit="handleDocUploadSubmit(event)"><div class="modal-body p-4 bg-white">
+      <input type="hidden" id="updDocId"><input type="hidden" id="updPatientId"><input type="hidden" id="updDocName">
+      <div class="mb-3"><label class="form-label fw-bold">Select File</label><input type="file" id="updFile" class="form-control" required></div>
+    </div><div class="modal-footer"><button type="submit" id="saveUploadBtn" class="btn btn-primary w-100">Upload File</button></div></form>
+  </div></div></div>
+
+  <!-- 6. Review Doc Modal -->
+  <div class="modal fade" id="reviewDocModal" tabindex="-1"><div class="modal-dialog modal-sm"><div class="modal-content">
+    <div class="modal-header"><h5 class="modal-title">Review Compliance</h5></div>
+    <form onsubmit="handleDocReviewSubmit(event)"><div class="modal-body p-4 bg-white">
+      <input type="hidden" id="revDocId"><input type="hidden" id="revPatientId">
+      <div class="mb-3"><label class="form-label fw-bold">Status</label><select id="revStatus" class="form-select"><option>Approved</option><option>Needs Revision</option></select></div>
+      <div class="mb-3"><label class="form-label fw-bold">Notes</label><textarea id="revNotes" class="form-control" rows="2"></textarea></div>
+    </div><div class="modal-footer"><button type="submit" id="saveReviewBtn" class="btn btn-primary w-100">Save Review</button></div></form>
+  </div></div></div>
+
+  <!-- 7. History Modal -->
+  <div class="modal fade" id="historyModal" tabindex="-1"><div class="modal-dialog"><div class="modal-content">
+    <div class="modal-header"><h5 class="modal-title">Audit Trail</h5><button type="button" class="btn-close btn-close-vogue" data-bs-dismiss="modal"></button></div>
+    <div class="modal-body p-0 bg-white"><ul class="list-group list-group-flush" id="historyList" style="max-height:350px; overflow-y:auto;"></ul></div>
+  </div></div></div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    const API_URL = "https://script.google.com/macros/s/AKfycbx8soXynzvmwKVqFeB_pNPXg4NPNMsOpcUDVvzrt-Z9SMwGgR18c6Tv7gEv7wFM8RjbBQ/exec";
+
+    let portalData = {};
+
+    async function apiGet(action) {
+      const res = await fetch(`${API_URL}?action=${action}`);
+      const json = await res.json();
+      if (json.status === 'error') throw new Error(json.message);
+      return json.data;
+    }
+
+    async function apiPost(action, payload = {}) {
+      const res = await fetch(API_URL, {
+        method: 'POST',
+        body: JSON.stringify({ action: action, payload: payload })
+      });
+      const json = await res.json();
+      if (json.status === 'error') throw new Error(json.message);
+      return json.data;
+    }
+
+    async function loadData() {
+      try {
+        portalData = await apiGet('getPortalData');
+        renderDashboard(); 
+        populatePatientDropdowns(); 
+        renderPatientsTable(); 
+        renderTomorrowRemindersQueue(); 
+        renderVisitsTable(); 
+        renderDocsTable(); 
+        renderCarePlansTable();
+      } catch (err) {
+        document.getElementById('patientsTable').innerHTML = 
+          `<tr><td colspan="7" class="text-center py-5 text-danger fw-bold">SERVER CRASH: ${err.message}</td></tr>`;
+      }
+    }
+
+    function renderDashboard() {
+      const k = portalData.kpis || {};
+      document.getElementById('kpiTotalPatients').innerText = k.totalPatients || 0;
+      document.getElementById('kpiTotalVisitsCount').innerText = k.totalVisitsCount || 0;
+      document.getElementById('kpiPendingDocs').innerText = k.pendingDocsCount || 0;
+      document.getElementById('kpiTomorrowRemindersCount').innerText = k.tomorrowRemindersCount || 0;
+    }
+
+    function populatePatientDropdowns() {
+      const opts = '<option value="">-- Choose Patient --</option>' + (portalData.patients||[]).map(p => `<option value="${p.patientId}">${p.name}</option>`).join('');
+      document.getElementById('vaultPatientSelect').innerHTML = opts;
+      document.getElementById('visitPatientSelect').innerHTML = opts;
+      document.getElementById('vPatientSelect').innerHTML = opts;
+      document.getElementById('carePatientSelect').innerHTML = opts;
+    }
+
+    function renderPatientsTable() {
+      const search = (document.getElementById('patientSearch')?.value || '').toLowerCase();
+      const filtered = (portalData.patients||[]).filter(p => p.patientId.toLowerCase().includes(search) || p.name.toLowerCase().includes(search) || p.phone.toLowerCase().includes(search));
+      const tbody = document.getElementById('patientsTable');
+      if(filtered.length === 0) { tbody.innerHTML = '<tr><td colspan="7" class="text-center py-5 text-muted">No records found.</td></tr>'; return; }
+      
+      tbody.innerHTML = filtered.map(p => `
+        <tr>
+          <td><strong>${p.patientId}</strong></td>
+          <td><b>${p.name}</b><br><span style="font-size:0.7rem;">${p.email}</span></td>
+          <td>${p.dob} <b>(${p.age} yrs)</b><br><span style="font-size:0.7rem;">${p.phone}</span></td>
+          <td><span class="badge badge-vogue">${p.insurance}</span></td>
+          <td><span class="badge badge-clear">${p.visitCount} Visits</span></td>
+          <td><div class="progress"><div class="progress-bar" style="width:${p.progressPercent}%"></div></div><strong style="font-size:0.7rem;">${p.progressPercent}%</strong></td>
+          <td>
+            <button class="btn btn-action me-1 mb-1" onclick="openPatientRecordModal('${p.patientId}')">Chart</button>
+            <button class="btn btn-action me-1 mb-1" onclick="openEditPatientModal('${p.patientId}')">Edit</button>
+            <button class="btn btn-action me-1 mb-1" onclick="openVisitModalFor('${p.patientId}')">+ Visit</button>
+            <button class="btn btn-action mb-1" onclick="openHistoryModal('${p.patientId}')">Log</button>
+          </td>
+        </tr>
+      `).join('');
+    }
+
+    function renderTomorrowRemindersQueue() {
+      const rem = portalData.tomorrowReminders || [];
+      const tbody = document.getElementById('tomorrowQueueBody');
+      if(rem.length === 0) { tbody.innerHTML = '<tr><td colspan="4" class="text-center py-3 text-muted">No appointments for tomorrow.</td></tr>'; return; }
+      tbody.innerHTML = rem.map(v => {
+        const p = portalData.patients.find(pt => pt.patientId === v.patientId);
+        return `<tr>
+          <td><b>${p ? p.name : v.patientId}</b></td>
+          <td style="color:var(--vogue-alert); font-weight:bold;">${v.nextFollowUpDate}</td>
+          <td>${v.followUpInstructions}</td>
+          <td>
+            ${v.reminderStatus === 'Reminder Sent' ? '<span class="badge badge-clear me-1">Sent</span>' : `<button class="btn btn-action me-1" onclick="dispatchReminder(this, '${v.visitId}')">Send Email</button>`}
+            <button type="button" class="btn btn-action" onclick="openRescheduleModal('${v.visitId}', '${v.nextFollowUpDate}', '${v.followUpInstructions}')">Reschedule</button>
+          </td>
+        </tr>`;
+      }).join('');
+    }
+
+    function renderVisitsTable() {
+      const sel = document.getElementById('visitPatientSelect').value;
+      const visits = portalData.visits || [];
+      const patientsList = portalData.patients || [];
+      const filtered = sel ? visits.filter(v => v.patientId === sel) : visits;
+      const tbody = document.getElementById('visitsTable');
+
+      if(filtered.length === 0) { tbody.innerHTML = '<tr><td colspan="7" class="text-center py-5 text-muted">No visits found.</td></tr>'; return; }
+      
+      tbody.innerHTML = filtered.map(v => {
+        const patient = patientsList.find(p => p.patientId === v.patientId);
+        const patientDisplayName = patient ? `<b>${patient.name}</b><div style="font-size:0.7rem; color:var(--vogue-muted);">${patient.patientId}</div>` : `<strong>${v.patientId}</strong>`;
+        const rawProvider = (v.provider || '').trim();
+        const providerName = (rawProvider && rawProvider.toLowerCase() !== 'na') ? rawProvider : 'Attending Physician';
+        const rawNotes = (v.notes || '').trim();
+        const notesDisplay = (rawNotes && rawNotes.toLowerCase() !== 'na') ? rawNotes : 'No additional clinical notes.';
+
+        return `
+        <tr>
+          <td><strong>${v.visitId}</strong></td>
+          <td>${patientDisplayName}</td>
+          <td style="font-weight:600;">${v.visitDate}</td>
+          <td>
+            <span class="badge badge-vogue">${v.visitType}</span>
+            <div style="font-size:0.75rem; font-weight:600; margin-top:4px; color:var(--vogue-black);">Dr. ${providerName.replace(/^Dr\.\s*/i, '')}</div>
+          </td>
+          <td>
+            <div style="font-size:0.8rem;">${notesDisplay}</div>
+            <div class="mt-1">
+              ${v.diagnosisDocUrl ? `<a href="${v.diagnosisDocUrl}" target="_blank" class="btn-action me-1" style="font-size:0.6rem;">View Scan</a> <span onclick="openDiagUploadModal('${v.visitId}')" style="font-size:0.65rem; color:blue; cursor:pointer; text-decoration:underline;">Change File</span>` : `<span onclick="openDiagUploadModal('${v.visitId}')" style="font-size:0.65rem; color:blue; cursor:pointer; text-decoration:underline;">+ Attach Scan</span>`}
+              <span onclick="openEditVisitModal('${v.visitId}')" style="font-size:0.65rem; color:#d81b60; cursor:pointer; text-decoration:underline; margin-left:8px;">Edit Details</span>
+            </div>
+          </td>
+          <td>
+            ${v.nextFollowUpDate ? `<strong style="color:var(--vogue-alert);">${v.nextFollowUpDate}</strong><div style="font-size:0.7rem; color:var(--vogue-muted);">${v.followUpInstructions || 'Standard Prep'}</div>` : '<span class="text-muted" style="font-size:0.8rem;">None</span>'}
+          </td>
+          <td>
+            ${v.nextFollowUpDate ? (v.reminderStatus === 'Reminder Sent' ? `<span class="badge badge-clear mb-1">Sent</span>` : `<button type="button" class="btn btn-action mb-1" onclick="dispatchReminder(this, '${v.visitId}')">Remind</button>`) : '-'}
+            ${v.nextFollowUpDate ? `<br><button type="button" class="btn btn-action mt-1" onclick="openRescheduleModal('${v.visitId}', '${v.nextFollowUpDate}', '${v.followUpInstructions}')">Reschedule</button>` : ''}
+          </td>
+        </tr>
+      `}).join('');
+    }
+
+    function renderDocsTable() {
+      const sel = document.getElementById('vaultPatientSelect').value;
+      const docs = portalData.docs || [];
+      const filtered = sel ? docs.filter(d => d.patientId === sel) : docs;
+      const tbody = document.getElementById('docsTable');
+      if(filtered.length === 0) { tbody.innerHTML = '<tr><td colspan="5" class="text-center py-5 text-muted">Please select a patient.</td></tr>'; return; }
+      
+      tbody.innerHTML = filtered.map(d => `
+        <tr>
+          <td><strong>${d.docId}</strong></td>
+          <td>${d.docName}</td>
+          <td><span class="badge ${d.status==='Approved'?'badge-clear':'badge-pending'}">${d.status}</span></td>
+          <td>${d.fileUrl ? `<a href="${d.fileUrl}" target="_blank">View File</a>` : 'No Upload'}</td>
+          <td>
+            <button class="btn btn-action me-1" onclick="openUploadDocModal('${d.docId}','${d.patientId}','${d.docName}')">Upload</button>
+            <button class="btn btn-action" onclick="openReviewModal('${d.docId}','${d.patientId}','${d.status}','${d.reviewNotes}')">Review</button>
+          </td>
+        </tr>
+      `).join('');
+    }
+
+    function renderCarePlansTable() {
+      const sel = document.getElementById('carePatientSelect').value;
+      const plans = portalData.carePlans || [];
+      const filtered = sel ? plans.filter(m => m.patientId === sel) : plans;
+      const tbody = document.getElementById('carePlansTable');
+      if(filtered.length === 0) { tbody.innerHTML = '<tr><td colspan="5" class="text-center py-5 text-muted">Please select a patient.</td></tr>'; return; }
+      
+      tbody.innerHTML = filtered.map(m => `
+        <tr>
+          <td><strong>${m.milestoneId}</strong></td>
+          <td>${m.milestoneName}</td>
+          <td>${m.targetDate}</td>
+          <td><span class="badge ${m.status==='Completed'?'badge-clear':'badge-pending'}">${m.status}</span></td>
+          <td>
+            ${m.status === 'Pending' ? `<button class="btn btn-action" onclick="updateMilestone('${m.milestoneId}','${m.patientId}','Completed')">Mark Done</button>` : `<button class="btn btn-action" onclick="updateMilestone('${m.milestoneId}','${m.patientId}','Pending')">Reset</button>`}
+          </td>
+        </tr>
+      `).join('');
+    }
+
+    function openPatientRecordModal(pid) {
+      const p = (portalData.patients||[]).find(x => x.patientId === pid); if(!p) return;
+      const vists = (portalData.visits||[]).filter(v => v.patientId === pid);
+      const docs = (portalData.docs||[]).filter(d => d.patientId === pid);
+      const plans = (portalData.carePlans||[]).filter(c => c.patientId === pid);
+
+      const vHtml = vists.map(v => {
+        const rawProv = (v.provider || '').trim(); const provName = (rawProv && rawProv.toLowerCase() !== 'na') ? rawProv : 'Attending Physician';
+        const rawNote = (v.notes || '').trim(); const noteDisp = (rawNote && rawNote.toLowerCase() !== 'na') ? rawNote : 'No additional clinical notes.';
+        return `<div class="p-3 mb-2 bg-light border border-dark"><div class="d-flex justify-content-between"><strong>${v.visitDate} — ${v.visitType}</strong><span>Dr. ${provName.replace(/^Dr\.\s*/i, '')}</span></div><div style="font-size:0.8rem; margin-top:4px;">${noteDisp}</div>${v.diagnosisDocUrl ? `<div class="mt-2"><a href="${v.diagnosisDocUrl}" target="_blank" class="btn-action">View Diagnosis</a></div>` : ''}</div>`
+      }).join('') || '<div class="text-muted">No visits.</div>';
+      
+      const dHtml = docs.map(d => `<div class="d-flex justify-content-between py-2 border-bottom"><div>${d.docName}</div><span class="badge ${d.status==='Approved'?'badge-clear':'badge-pending'}">${d.status}</span></div>`).join('');
+      const cHtml = plans.map(m => `<div class="d-flex justify-content-between py-2 border-bottom"><div>${m.milestoneName}</div><span class="badge ${m.status==='Completed'?'badge-clear':'badge-pending'}">${m.status}</span></div>`).join('');
+
+      document.getElementById('patientRecordBody').innerHTML = `
+        <div class="p-3 bg-light border border-dark mb-4 row g-3">
+          <div class="col-md-6">
+            <div class="d-flex justify-content-between align-items-start">
+              <div>
+                <div style="font-size:0.65rem; font-weight:700; color:var(--vogue-muted);">Patient Identity</div>
+                <h4 style="font-family:'Playfair Display',serif; font-weight:700;">${p.name}</h4>
+              </div>
+              <button class="btn btn-action" onclick="openEditPatientModal('${p.patientId}')">Edit Info</button>
+            </div>
+            <div style="font-size:0.8rem;">ID: ${p.patientId} | DOB: ${p.dob} <b>(${p.age} yrs)</b></div>
+            <div style="font-size:0.8rem;">${p.email} | ${p.phone}</div>
+          </div>
+          <div class="col-md-6 border-start border-secondary ps-4">
+            <div style="font-size:0.65rem; font-weight:700; color:var(--vogue-muted);">Coverage & Metrics</div>
+            <div style="font-size:0.9rem; font-weight:700;">${p.insurance} (Pol: ${p.policyNum})</div>
+            <div style="font-size:0.8rem; margin-top:4px;">Lifetime Encounters: ${p.visitCount}</div>
+          </div>
+        </div>
+        <div class="mb-4"><h6 class="fw-bold text-uppercase border-bottom border-dark pb-2" style="font-size:0.75rem;">🩺 Visit History</h6>${vHtml}</div>
+        <div class="row g-4">
+          <div class="col-md-6"><h6 class="fw-bold text-uppercase border-bottom border-dark pb-2" style="font-size:0.75rem;">📋 Documents</h6>${dHtml}</div>
+          <div class="col-md-6"><h6 class="fw-bold text-uppercase border-bottom border-dark pb-2" style="font-size:0.75rem;">⚕ Care Plan</h6>${cHtml}</div>
+        </div>
+      `;
+      bootstrap.Modal.getOrCreateInstance(document.getElementById('patientRecordModal')).show();
+    }
+
+    function switchTab(tabId) {
+      ['patientsTab', 'visitsTab', 'docsTab', 'careTab'].forEach(t => document.getElementById(t).style.display = 'none');
+      document.getElementById(tabId).style.display = 'block';
+      document.querySelectorAll('#portalTabs .nav-link').forEach(a => a.classList.remove('active'));
+      document.querySelector(`[onclick="switchTab('${tabId}')"]`).classList.add('active');
+    }
+
+    function openVisitModalFor(pid) { document.getElementById('vPatientSelect').value = pid; bootstrap.Modal.getOrCreateInstance(document.getElementById('newVisitModal')).show(); }
+    function openDiagUploadModal(vid) { document.getElementById('diagVisitId').value = vid; bootstrap.Modal.getOrCreateInstance(document.getElementById('uploadDiagModal')).show(); }
+    function openUploadDocModal(did, pid, dname) { document.getElementById('updDocId').value=did; document.getElementById('updPatientId').value=pid; document.getElementById('updDocName').value=dname; bootstrap.Modal.getOrCreateInstance(document.getElementById('uploadDocModal')).show(); }
+    function openReviewModal(did, pid, st, note) { document.getElementById('revDocId').value=did; document.getElementById('revPatientId').value=pid; document.getElementById('revStatus').value=st||'Approved'; document.getElementById('revNotes').value=note||''; bootstrap.Modal.getOrCreateInstance(document.getElementById('reviewDocModal')).show(); }
+    function openHistoryModal(pid) { const p = (portalData.patients||[]).find(x=>x.patientId===pid); if(!p)return; document.getElementById('historyList').innerHTML = p.history.map(h => `<li class="list-group-item"><div style="font-size:0.68rem; font-weight:700;">${h.timestamp}</div><div style="font-size:0.85rem;">${h.note}</div></li>`).join(''); bootstrap.Modal.getOrCreateInstance(document.getElementById('historyModal')).show(); }
+
+    function openRescheduleModal(visitId, currentDate, currentNotes) {
+      document.getElementById('reschedVisitId').value = visitId; document.getElementById('reschedDate').value = ''; document.getElementById('reschedNotes').value = currentNotes || '';
+      bootstrap.Modal.getOrCreateInstance(document.getElementById('rescheduleModal')).show();
+    }
+
+    function openEditPatientModal(patientId) {
+      const p = portalData.patients.find(x => x.patientId === patientId); if(!p) return;
+      document.getElementById('editPId').value = p.patientId;
+      document.getElementById('editPName').value = p.name;
+      document.getElementById('editPEmail').value = p.email;
+      
+      let dStr = p.dob;
+      if (dStr && dStr.includes('/')) {
+        let parts = dStr.split('/');
+        if(parts.length === 3) dStr = `${parts[2]}-${parts[0].padStart(2,'0')}-${parts[1].padStart(2,'0')}`;
+      }
+      document.getElementById('editPDob').value = dStr;
+      document.getElementById('editPPhone').value = p.phone;
+      document.getElementById('editPInsurance').value = p.insurance;
+      document.getElementById('editPPolicyNum').value = p.policyNum;
+      
+      bootstrap.Modal.getOrCreateInstance(document.getElementById('patientRecordModal')).hide();
+      bootstrap.Modal.getOrCreateInstance(document.getElementById('editPatientModal')).show();
+    }
+
+    function openEditVisitModal(visitId) {
+      const v = portalData.visits.find(x => x.visitId === visitId); if(!v) return;
+      document.getElementById('editVId').value = v.visitId;
+      document.getElementById('editVType').value = v.visitType;
+      document.getElementById('editVProvider').value = v.provider;
+      document.getElementById('editVNotes').value = v.notes;
+      bootstrap.Modal.getOrCreateInstance(document.getElementById('editVisitModal')).show();
+    }
+
+    async function handleRescheduleSubmit(e) {
+      e.preventDefault(); const b = document.getElementById('saveReschedBtn'); const orig = b.innerHTML; b.innerHTML='Saving...'; b.disabled=true;
+      const p = { visitId: document.getElementById('reschedVisitId').value, newDate: document.getElementById('reschedDate').value, newInstructions: document.getElementById('reschedNotes').value };
+      try {
+        portalData = await apiPost('rescheduleFollowUp', p);
+        renderVisitsTable(); renderTomorrowRemindersQueue();
+        bootstrap.Modal.getOrCreateInstance(document.getElementById('rescheduleModal')).hide();
+        e.target.reset();
+      } catch(err) { alert(err.message); }
+      b.innerHTML=orig; b.disabled=false;
+    }
+
+    async function handleEditPatientSubmit(e) {
+      e.preventDefault(); const b = document.getElementById('saveEditPatientBtn'); const orig = b.innerHTML; b.innerHTML='Updating...'; b.disabled=true;
+      const p = { patientId: document.getElementById('editPId').value, name: document.getElementById('editPName').value, email: document.getElementById('editPEmail').value, dob: document.getElementById('editPDob').value, phone: document.getElementById('editPPhone').value, insurance: document.getElementById('editPInsurance').value, policyNum: document.getElementById('editPPolicyNum').value };
+      try {
+        portalData = await apiPost('updatePatientProfile', p);
+        populatePatientDropdowns(); renderPatientsTable();
+        bootstrap.Modal.getOrCreateInstance(document.getElementById('editPatientModal')).hide();
+        e.target.reset();
+      } catch(err) { alert(err.message); }
+      b.innerHTML=orig; b.disabled=false;
+    }
+
+    async function handleEditVisitSubmit(e) {
+      e.preventDefault(); const b = document.getElementById('saveEditVisitBtn'); const orig = b.innerHTML; b.innerHTML='Updating...'; b.disabled=true;
+      const p = { visitId: document.getElementById('editVId').value, visitType: document.getElementById('editVType').value, provider: document.getElementById('editVProvider').value, notes: document.getElementById('editVNotes').value };
+      try {
+        portalData = await apiPost('updateVisitDetails', p);
+        renderVisitsTable();
+        bootstrap.Modal.getOrCreateInstance(document.getElementById('editVisitModal')).hide();
+        e.target.reset();
+      } catch(err) { alert(err.message); }
+      b.innerHTML=orig; b.disabled=false;
+    }
+
+    function readFileBase64(f) { return new Promise(r => { if(!f) return r(''); let rd=new FileReader(); rd.onload=e=>r(e.target.result); rd.readAsDataURL(f); }); }
+
+    async function handlePatientSubmit(e) {
+      e.preventDefault(); const b = document.getElementById('savePatientBtn'); const orig = b.innerHTML; b.innerHTML = 'Registering...'; b.disabled = true;
+      const p = { name: document.getElementById('pName').value, email: document.getElementById('pEmail').value, dob: document.getElementById('pDob').value, phone: document.getElementById('pPhone').value, insurance: document.getElementById('pInsurance').value, policyNum: document.getElementById('pPolicyNum').value, notes: document.getElementById('pNotes').value };
+      try {
+        portalData = await apiPost('registerPatient', p);
+        populatePatientDropdowns(); renderPatientsTable();
+        bootstrap.Modal.getOrCreateInstance(document.getElementById('newPatientModal')).hide();
+        e.target.reset();
+      } catch(err) { alert(err.message); }
+      b.innerHTML=orig; b.disabled=false;
+    }
+
+    async function handleVisitSubmit(e) {
+      e.preventDefault(); const b = document.getElementById('saveVisitBtn'); const orig = b.innerHTML; b.innerHTML = 'Posting...'; b.disabled = true;
+      const f = document.getElementById('vDiagnosisFile').files[0];
+      const p = { patientId: document.getElementById('vPatientSelect').value, visitType: document.getElementById('vVisitType').value, visitDate: document.getElementById('vDate').value, provider: document.getElementById('vProvider').value, notes: document.getElementById('vNotes').value, nextFollowUpDate: document.getElementById('vNextFollowUpDate').value, followUpInstructions: document.getElementById('vFollowUpInstructions').value, fileData: await readFileBase64(f), fileName: f?.name||'' };
+      try {
+        portalData = await apiPost('logReturnVisit', p);
+        renderVisitsTable(); renderPatientsTable(); renderTomorrowRemindersQueue(); renderDashboard();
+        bootstrap.Modal.getOrCreateInstance(document.getElementById('newVisitModal')).hide();
+        e.target.reset();
+      } catch(err) { alert(err.message); }
+      b.innerHTML=orig; b.disabled=false;
+    }
+
+    async function handleDiagnosisUploadSubmit(e) {
+      e.preventDefault(); const b = document.getElementById('saveDiagBtn'); const orig = b.innerHTML; b.innerHTML='Uploading...'; b.disabled=true;
+      const f = document.getElementById('diagFile').files[0];
+      const p = { visitId: document.getElementById('diagVisitId').value, fileData: await readFileBase64(f), fileName: f?.name||'' };
+      try {
+        portalData = await apiPost('updateVisitDiagnosisDoc', p);
+        renderVisitsTable();
+        bootstrap.Modal.getOrCreateInstance(document.getElementById('uploadDiagModal')).hide();
+        e.target.reset();
+      } catch(err) { alert(err.message); }
+      b.innerHTML=orig; b.disabled=false;
+    }
+
+    async function handleDocUploadSubmit(e) {
+      e.preventDefault(); const b = document.getElementById('saveUploadBtn'); const orig = b.innerHTML; b.innerHTML='Uploading...'; b.disabled=true;
+      const f = document.getElementById('updFile').files[0];
+      const p = { docId: document.getElementById('updDocId').value, patientId: document.getElementById('updPatientId').value, docName: document.getElementById('updDocName').value, fileData: await readFileBase64(f), fileName: f?.name||'' };
+      try {
+        portalData = await apiPost('uploadPatientDoc', p);
+        renderDocsTable(); renderDashboard();
+        bootstrap.Modal.getOrCreateInstance(document.getElementById('uploadDocModal')).hide();
+        e.target.reset();
+      } catch(err) { alert(err.message); }
+      b.innerHTML=orig; b.disabled=false;
+    }
+
+    async function handleDocReviewSubmit(e) {
+      e.preventDefault(); const b = document.getElementById('saveReviewBtn'); const orig = b.innerHTML; b.innerHTML='Saving...'; b.disabled=true;
+      try {
+        portalData = await apiPost('reviewDocument', {
+          docId: document.getElementById('revDocId').value,
+          patientId: document.getElementById('revPatientId').value,
+          status: document.getElementById('revStatus').value,
+          notes: document.getElementById('revNotes').value
+        });
+        renderDocsTable(); renderPatientsTable();
+        bootstrap.Modal.getOrCreateInstance(document.getElementById('reviewDocModal')).hide();
+      } catch(err) { alert(err.message); }
+      b.innerHTML=orig; b.disabled=false;
+    }
+
+    async function updateMilestone(mid, pid, status) {
+      try {
+        portalData = await apiPost('updateCarePlanStatus', { milestoneId: mid, patientId: pid, status: status });
+        renderCarePlansTable(); renderPatientsTable();
+      } catch(err) { alert(err.message); }
+    }
+
+    async function dispatchReminder(btn, vid) {
+      btn.innerHTML = 'Sending...'; btn.disabled = true;
+      try {
+        portalData = await apiPost('sendFollowUpReminder', { visitId: vid });
+        renderTomorrowRemindersQueue(); renderVisitsTable();
+      } catch(err) { alert(err.message); }
+    }
+
+    function toggleAIChat() { const c = document.getElementById('aiChatCard'); c.style.display = c.style.display === 'flex' ? 'none' : 'flex'; }
+    function handleAISubmit(e) {
+      if(e) e.preventDefault(); const inp = document.getElementById('aiInput'); const q = inp.value.trim(); if(!q) return;
+      const b = document.getElementById('aiChatBody'); b.innerHTML += `<div class="ai-msg ai-msg-user">${q}</div>`; inp.value = '';
+      setTimeout(() => { b.innerHTML += `<div class="ai-msg ai-msg-bot">I can assist with editing patient profiles, updating visit doctors, and managing reminders!</div>`; b.scrollTop = b.scrollHeight; }, 250);
+    }
+
+    window.onload = loadData;
+  </script>
+</body>
+</html>
